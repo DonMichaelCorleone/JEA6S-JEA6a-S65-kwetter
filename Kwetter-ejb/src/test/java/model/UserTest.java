@@ -6,6 +6,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -13,7 +14,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import model.*;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  *
@@ -22,37 +26,42 @@ import org.mockito.Mockito;
 public class UserTest {
     private User instance = null;
     private Posting p = null;
+    private ArrayList<User> followers =  new ArrayList<User>();
+    private ArrayList<Posting> tweets =  new ArrayList<Posting>();
     public UserTest() {
       
     }
     
-    @BeforeClass
-    public static void setUpClass() {
-          
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
     @Before
     public void setUp() {
-        System.out.println("setUp method called" );
-//        instance =  new User("Instance");
-instance = Mockito.mock(User.class);
+        instance =  new User("Instance");
+     
+        for(int i = 0; i < 16; i++){
+            User u = new User("Follower : " + i);
+            long id = i;
+            u.setUserName("Follower : " + i);
+            u.setId(id);
+            followers.add(u);
+        }
+        instance.setFollowers(followers);
+        System.out.println(instance.getFollowers());
+        
+        for(int i = 0; i < 16; i++){
+            Posting p  = new Posting(instance, "TestPosting" + i, "Testdescription" + i);
+            long id = i;
+            p.setId(id);
+            tweets.add(p);
+        }
+        instance.setFollowers(followers);
+        instance.setTweets(tweets);
     }
-    
-    @After
-    public void tearDown() {
-    }
-
     /**
      * Test of getUserName method, of class User.
      */
     @Test
     public void testGetUserName() {
-        instance.setUserName("Instance1");
-        String expResult = "Instance1";
+        System.out.println("getUserName");
+        String expResult = "Instance";
         String result = instance.getUserName();
         assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result, expResult, result);
     }
@@ -63,11 +72,10 @@ instance = Mockito.mock(User.class);
     @Test
     public void testSetUserName() {
         System.out.println("setUserName");
-        String userName = "";
-        User instance = null;
-        instance.setUserName(userName);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String expResult = "Instance1";
+        instance.setUserName(expResult);
+        String result = instance.getUserName();
+        assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result, expResult, result);
     }
 
     /**
@@ -76,12 +84,10 @@ instance = Mockito.mock(User.class);
     @Test
     public void testGetProfilePicture() {
         System.out.println("getProfilePicture");
-        User instance = null;
-        String expResult = "";
+        String expResult = "c:/Doc/Picture";
+        instance.setProfilePicture(expResult);
         String result = instance.getProfilePicture();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result, expResult, result);
     }
 
     /**
@@ -89,12 +95,11 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testSetProfilePicture() {
-        System.out.println("setProfilePicture");
-        String profilePicture = "";
-        User instance = null;
-        instance.setProfilePicture(profilePicture);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        System.out.println("getProfilePicture");
+        String expResult = "c:/Doc/Picture";
+        instance.setProfilePicture(expResult);
+        String result = instance.getProfilePicture();
+        assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result, expResult, result);
     }
 
     /**
@@ -103,12 +108,9 @@ instance = Mockito.mock(User.class);
     @Test
     public void testGetTweets() {
         System.out.println("getTweets");
-        User instance = null;
-        ArrayList<Posting> expResult = null;
-        ArrayList<Posting> result = instance.getTweets();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        int expResult = tweets.size();
+        int result = instance.getTweets().size();
+        assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result ,expResult, result);
     }
 
     /**
@@ -116,12 +118,10 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testSetTweets() {
-        System.out.println("setTweets");
-        ArrayList<Posting> tweets = null;
-        User instance = null;
-        instance.setTweets(tweets);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        System.out.println("getTweets");
+        int expResult = tweets.size();
+        int result = instance.getTweets().size();
+        assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result ,expResult, result);
     }
 
     /**
@@ -129,13 +129,9 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testGetFollowers() {
-        System.out.println("getFollowers");
-        User instance = null;
-        ArrayList<User> expResult = null;
-        ArrayList<User> result = instance.getFollowers();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        int expResult = followers.size();
+        int result = instance.getFollowers().size();
+        assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result ,expResult, result);
     }
 
     /**
@@ -143,12 +139,10 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testSetFollowers() {
-        System.out.println("setFollowers");
-        ArrayList<User> followers = null;
-        User instance = null;
         instance.setFollowers(followers);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        int expResult = followers.size();
+        int result = instance.getFollowers().size();
+        assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result ,expResult, result);
     }
 
     /**
@@ -156,13 +150,10 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testGetFollowing() {
-        System.out.println("getFollowing");
-        User instance = null;
-        ArrayList<User> expResult = null;
-        ArrayList<User> result = instance.getFollowing();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        instance.setFollowing(followers);
+        int expResult = followers.size();
+        int result = instance.getFollowing().size();
+        assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result ,expResult, result);
     }
 
     /**
@@ -170,12 +161,10 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testSetFollowing() {
-        System.out.println("setFollowing");
-        ArrayList<User> following = null;
-        User instance = null;
-        instance.setFollowing(following);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        instance.setFollowing(followers);
+        int expResult = followers.size();
+        int result = instance.getFollowing().size();
+        assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result ,expResult, result);
     }
 
     /**
@@ -183,13 +172,10 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testGetLocation() {
-        System.out.println("getLocation");
-        User instance = null;
-        String expResult = "";
+        String expResult = "Roermond";
+        instance.setLocation(expResult);
         String result = instance.getLocation();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result ,expResult, result);
     }
 
     /**
@@ -197,12 +183,10 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testSetLocation() {
-        System.out.println("setLocation");
-        String location = "";
-        User instance = null;
-        instance.setLocation(location);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String expResult = "Roermond";
+        instance.setLocation(expResult);
+        String result = instance.getLocation();
+        assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result ,expResult, result);
     }
 
     /**
@@ -210,13 +194,10 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testGetBiography() {
-        System.out.println("getBiography");
-        User instance = null;
-        String expResult = "";
+        String expResult = "Bib1";
+        instance.setBiography(expResult);
         String result = instance.getBiography();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result ,expResult, result);
     }
 
     /**
@@ -224,12 +205,10 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testSetBiography() {
-        System.out.println("setBiography");
-        String biography = "";
-        User instance = null;
-        instance.setBiography(biography);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String expResult = "Bib1";
+        instance.setBiography(expResult);
+        String result = instance.getBiography();
+        assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result ,expResult, result);
     }
 
     /**
@@ -237,13 +216,10 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testGetWebsiteURL() {
-        System.out.println("getWebsiteURL");
-        User instance = null;
-        String expResult = "";
+        String expResult = "http://test";
+        instance.setWebsiteURL(expResult);
         String result = instance.getWebsiteURL();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result ,expResult, result);
     }
 
     /**
@@ -251,12 +227,10 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testSetWebsiteURL() {
-        System.out.println("setWebsiteURL");
-        String websiteURL = "";
-        User instance = null;
-        instance.setWebsiteURL(websiteURL);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+       String expResult = "http://test";
+        instance.setWebsiteURL(expResult);
+        String result = instance.getWebsiteURL();
+        assertEquals("There was a mismatch between expected result: " + expResult + " " + "And:  " + result ,expResult, result);
     }
 
     /**
@@ -264,13 +238,10 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testGetId() {
-        System.out.println("getId");
-        User instance = null;
-        Long expResult = null;
+        Long id = 1234567L;
+        instance.setId(id);
         Long result = instance.getId();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(id, result);
     }
 
     /**
@@ -278,12 +249,10 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testSetId() {
-        System.out.println("setId");
-        Long id = null;
-        User instance = null;
+        Long id = 1234567L;
         instance.setId(id);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Long result = instance.getId();
+        assertEquals(id, result);
     }
 
     /**
@@ -291,13 +260,11 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testHashCode() {
-        System.out.println("hashCode");
-        User instance = null;
-        int expResult = 0;
+        Long id = 1234567L;
+        instance.setId(id);
+        int hashCode = id.hashCode();
         int result = instance.hashCode();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(hashCode, result);
     }
 
     /**
@@ -305,14 +272,11 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testEquals() {
-        System.out.println("equals");
-        Object object = null;
-        User instance = null;
-        boolean expResult = false;
-        boolean result = instance.equals(object);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        User testUser = new User("testuser");
+        testUser.setId(213891723L);
+        instance.setId(12391731L);        
+        assertFalse(instance.equals(testUser));
+        assertTrue(instance.equals(instance));
     }
 
     /**
@@ -320,13 +284,10 @@ instance = Mockito.mock(User.class);
      */
     @Test
     public void testToString() {
-        System.out.println("toString");
-        User instance = null;
-        String expResult = "";
-        String result = instance.toString();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Long id = 1234567L;
+        instance.setId(id);
+        String expresult = "model.User[ id=" + id + " ]";
+        assertEquals(expresult, "model.User[ id=1234567 ]");
     }
     
 }

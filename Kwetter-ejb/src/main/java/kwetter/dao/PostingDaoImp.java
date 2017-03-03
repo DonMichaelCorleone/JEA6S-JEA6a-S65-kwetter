@@ -2,19 +2,22 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package dao;
+package kwetter.dao;
 
 import model.Posting;
 import java.util.ArrayList;
 import java.util.List;
+import model.User;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import kwetter.dao.UserDaoImp;
 
 public class PostingDaoImp implements PostingDao {
 
     private static PostingDaoImp instance = null;
     private ConcurrentHashMap<Long, Posting> postings;
     private AtomicLong nextId = new AtomicLong(0L);
+    private UserDaoImp userDaoImp;
 
     public static synchronized PostingDao getPostingDao() {
         if (instance == null) {
@@ -25,46 +28,37 @@ public class PostingDaoImp implements PostingDao {
     }
 
     private PostingDaoImp() {
-        this.initWebBlog();
+        this.userDaoImp = new UserDaoImp();
     }
 
-    public void initWebBlog() {
-        postings = new ConcurrentHashMap<>();
 
-        create(new Posting("Student 1", "Title 1", "Content 1"));
-        create(new Posting("Student 1", "Title 2", "Content 2"));
-        create(new Posting("Student 1", "Title 3", "Content 3"));
-    }
 
     @Override
-    public Posting create(Posting p) {
+    public void create(Posting p) {
         if (p == null) {
             throw new IllegalArgumentException("Posting is null");
         }
         p.setId(nextId.getAndIncrement());
         postings.put(p.getId(), p);
-        return p;
     }
 
     @Override
-    public Posting update(Long id, String author, String title, String content) {
-        if (author == null || title == null || content == null) {
+    public void edit(Posting x) {
+        if (x.getAuthor() == null || x.getTitle() == null || x.getContent() == null) {
             throw new IllegalArgumentException("Author, Title or Content is null");
         }
-        if (!postings.containsKey(id)) {
-            throw new IllegalArgumentException("Id not found: " + id);
+        if (!postings.containsKey(x.getId())) {
+            throw new IllegalArgumentException("Id not found: " + x.getId());
         }
 
-        Posting p = postings.get(id);
-        p.setAuthor(author);
-        p.setTitle(title);
-        p.setContent(content);
-
-        return p;
+        Posting p = postings.get(x.getId());
+        p.setAuthor(x.getAuthor());
+        p.setTitle(x.getTitle());
+        p.setContent(x.getContent());
     }
 
     @Override
-    public void delete(Long id) {
+    public void remove(Long id) {
         if (!postings.containsKey(id)) {
             throw new IllegalArgumentException("Id not found: " + id);
         }
@@ -73,7 +67,7 @@ public class PostingDaoImp implements PostingDao {
     }
 
     @Override
-    public List<Posting> findAll() {
+    public List<Posting> findAll(User u) {
         return new ArrayList(postings.values());
     }
 

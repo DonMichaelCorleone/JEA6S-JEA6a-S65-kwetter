@@ -31,9 +31,11 @@ import model.User;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "User.getAll", query = "select u from User as u"),
-    @NamedQuery(name = "User.count", query = "select count(u) from User as u"),
-    @NamedQuery(name = "User.findByEmail", query = "select u from User as u where u.email= :email")
+    @NamedQuery(name = "User.setPassword", query = "select u from User as u where u.id= :id"),
+    @NamedQuery(name = "User.getFollows", query = "select u from User as u where u.id= :id"),
+    @NamedQuery(name = "User.getFollower", query = "select u from User as u where u.id= :id"),
+    @NamedQuery(name = "User.findAllFollows", query = "select u from User as u where u.id= :id"),
+    @NamedQuery(name = "User.findAllfollowers", query = "select u from User as u where u.id= :id"),
 })
 public class User implements Serializable {
     @Id
