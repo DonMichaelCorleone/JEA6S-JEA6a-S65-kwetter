@@ -15,35 +15,75 @@ public class UserDAOJPAImpl implements UserDao {
 
     private final EntityManager em;
 
-    public UserDAOJPAImpl(EntityManager em) {
+    private static UserDAOJPAImpl instance = null;
+    
+    public static synchronized UserDAOJPAImpl getUserDao(EntityManager em) {
+        if (instance == null) {
+            instance = new UserDAOJPAImpl(em);
+        }
+        return instance;
+    }
+    
+      public UserDAOJPAImpl(EntityManager em) {
         this.em = em;
     }
     
     @Override
     public void create(User user) {
-        em.persist(user);
+        if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin();
+        }
+        try {
+            em.persist(user);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            em.getTransaction().rollback();
+        }
     }
     
     @Override
     public void edit(User user) {
-        em.merge(user);
+         if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin();
+        }
+        try {
+            em.merge(user);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            em.getTransaction().rollback();
+        }
     }
     
     @Override
     public void remove(Long id) {
-       User u =  em.find(User.class, id);
-       em.remove(u);
+       if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin();
+        }
+        try {
+            User u = em.find(User.class, id);
+            em.remove(u);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            em.getTransaction().rollback();
+        }
     }
 
     @Override
     public User find(Long id) {
-        Query q =  em.createNamedQuery("User.findById",User.class);
-        q.setParameter("id", id);
-        return (User) q.getSingleResult();
+        if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin();
+        }
+        return em.find(User.class, id);
     }
     
     @Override
     public List<User> findAllFollowers(Long id) {
+         if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin();
+        }
         Query q =  em.createNamedQuery("User.findAllfollowers",User.class);
         q.setParameter("id", id);
         return (List<User>) q.getResultList();
@@ -51,6 +91,9 @@ public class UserDAOJPAImpl implements UserDao {
 
      @Override
     public List<User> findAllFollows(Long id) {
+         if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin();
+        }
         Query q =  em.createNamedQuery("User.findAllFollows",User.class);
         q.setParameter("id", id);
         return (List<User>) q.getResultList();
@@ -59,6 +102,9 @@ public class UserDAOJPAImpl implements UserDao {
 
     @Override
     public User getFollower(Long id) {
+         if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin();
+        }
         Query q =  em.createNamedQuery("User.getFollower",User.class);
         q.setParameter("id", id);
         return (User) q.getResultList();
@@ -66,6 +112,9 @@ public class UserDAOJPAImpl implements UserDao {
 
     @Override
     public User getFollows(Long id) {
+         if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin();
+        }
          Query q =  em.createNamedQuery("User.getFollows",User.class);
         q.setParameter("id", id);
         return (User) q.getResultList();
@@ -73,8 +122,21 @@ public class UserDAOJPAImpl implements UserDao {
 
     @Override
     public void setPassword(Long id, String password) {
+         if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin();
+        }
         Query q =  em.createNamedQuery("User.setPassword",User.class);
         q.setParameter("id",id);
         q.setParameter("password", password);
+    }
+
+    @Override
+    public User findByUsername(String username) {
+         if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin();
+        }
+        Query q =  em.createNamedQuery("User.findByUsername",User.class);
+        q.setParameter("username",username);
+        return (User) q.getResultList();
     }
 }

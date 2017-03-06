@@ -1,4 +1,4 @@
-package com.kwetter.util;
+package util;
 
 import model.*;
 import java.sql.SQLException;

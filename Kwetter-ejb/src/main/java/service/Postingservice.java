@@ -1,26 +1,37 @@
 package service;
 
-import kwetter.dao.PostingDao;
-import kwetter.dao.PostingDaoImp;
+import kwetter.dao.PostingDaoJPAImp;
 import java.util.List;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import model.Posting;
 import model.User;
 
+@Stateless
 public class Postingservice {
 
-    private final PostingDao postingDao;
+    @Inject
+    private PostingDaoJPAImp postingDao;
 
     public Postingservice() {
-        postingDao = PostingDaoImp.getPostingDao();
+        
+    }
+
+    public Postingservice(EntityManager em) {
+        postingDao = PostingDaoJPAImp.getPostingDao(em);
     }
     
     public void create(Posting p){
-        postingDao.create(p);
+        if(p.getContent().length() <= 140){
+             postingDao.create(p);
+        }       
     } 
-  
     
     public void edit(Posting p){
-        postingDao.edit(p);
+        if(p.getContent().length() <= 140){
+             postingDao.edit(p);
+        }     
     };
     
     public void remove(Long id){
@@ -28,7 +39,11 @@ public class Postingservice {
     };
 
     public List<Posting> findAll(User u){
-        return postingDao.findAll(u);
+        if(u != null){
+               return postingDao.findAll(u);
+        }else{
+            return null;
+        }
     };
     
     public Posting find(Long id){

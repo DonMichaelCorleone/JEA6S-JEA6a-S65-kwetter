@@ -3,7 +3,9 @@ package model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -21,32 +26,38 @@ import model.User;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
+@Table(name= "Posting")
 @NamedQueries({
-    @NamedQuery(name = "Posting.getAllByUserId", query = "select p from posting as p where p.user_id = :id"),
+    @NamedQuery(name = "Posting.findAll", query = "select p from Posting as p where p.author = :author")
 })
 public class Posting implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne
+    @OneToOne(cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     private User author;
     
     private String title;
     private String content;
-    private Date date;
     
-    @OneToMany
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private GregorianCalendar date;
+    
+    @OneToMany(cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Comment> comments;
-    private Long nextCommentId;
     
+    private Long nextCommentId;
   
-
+    public Posting(){
+        
+    }
+    
     public Posting(User author, String title, String content) {
         this.author = author;
         this.title = title;
         this.content = content;
-        this.date = new Date();
+        this.date = new GregorianCalendar();
         this.comments = new ArrayList<Comment>();
         this.nextCommentId = 1L;
     }
@@ -56,7 +67,7 @@ public class Posting implements Serializable{
         this.author = author;
         this.title = title;
         this.content = content;
-        this.date = new Date();
+        this.date = new GregorianCalendar();
         this.comments = new ArrayList<Comment>();
         this.nextCommentId = 1L;
     }
@@ -78,7 +89,7 @@ public class Posting implements Serializable{
         this.content = content;
     }
 
-    public Date getDate() {
+    public GregorianCalendar getDate() {
         return date;
     }
 

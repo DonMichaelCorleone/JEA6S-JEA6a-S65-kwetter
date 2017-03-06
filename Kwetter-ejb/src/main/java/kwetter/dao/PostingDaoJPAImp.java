@@ -12,44 +12,92 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import kwetter.dao.UserDaoImp;
 
 public class PostingDaoJPAImp implements PostingDao {
 
-     private final EntityManager em;
+    private final EntityManager em;
+
+    private static PostingDaoJPAImp instance = null;
 
     public PostingDaoJPAImp(EntityManager em) {
         this.em = em;
     }
 
+    public static synchronized PostingDaoJPAImp getPostingDao(EntityManager em) {
+        if (instance == null) {
+            instance = new PostingDaoJPAImp(em);
+        }
+        return instance;
+    }
+
     @Override
     public void create(Posting p) {
-        em.persist(p);
+        if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin();
+        }
+        try {
+            em.persist(p);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            em.getTransaction().rollback();
+        }
     }
 
     @Override
     public void edit(Posting p) {
-        em.merge(p);
+        if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin();
+        }
+        try {
+            em.merge(p);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            em.getTransaction().rollback();
+        }
     }
 
     @Override
     public void remove(Long id) {
-        Posting i =  em.find(Posting.class, id);
-        em.remove(i);
+        if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin();
+        }
+        try {
+            Posting i = em.find(Posting.class, id);
+            em.remove(i);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            em.getTransaction().rollback();
+        }
     }
 
     @Override
     public List<Posting> findAll(User u) {
-        Query q =  em.createNamedQuery("Posting.findAll",Posting.class);
-        q.setParameter("id", u.getId());
-        return (List<Posting>) q.getResultList();
+        if (!em.getTransaction().isActive()) {
+            em.getTransaction().begin();
+        }
+        try {
+            Query q = em.createNamedQuery("Posting.findAll", Posting.class);
+            q.setParameter("author", u);
+            return (List<Posting>) q.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            em.getTransaction().rollback();
+        }
+        return null;
     }
 
     @Override
     public Posting find(Long id) {
-        Posting p = em.find(Posting.class, id);
-        return p;
+        try {
+            Posting p = em.find(Posting.class, id);
+            return p;
+        } catch (Exception e) {
+            e.printStackTrace();
+            em.getTransaction().rollback();
+        }
+        return null;
     }
-        
-       
 }

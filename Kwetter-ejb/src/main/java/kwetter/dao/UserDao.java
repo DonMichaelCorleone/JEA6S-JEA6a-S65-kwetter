@@ -32,4 +32,6 @@ public interface UserDao {
     User getFollows(Long id);
     
     void setPassword(Long id , String password);
+    
+    User findByUsername(String username);
 }
